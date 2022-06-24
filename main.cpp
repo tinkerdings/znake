@@ -1,16 +1,14 @@
 #include <iostream>
 #include <SDL2/SDL.h>
+#include "game.h"
 
 int main()
 {
-    if(!SDL_Init(SDL_INIT_EVERYTHING))
-    {
-        std::cout << "SDL_Init: " << SDL_GetError() << std::endl;
+    Game *game = new Game();
+    game->run();
 
-        return -1;
-    }
+    game->end();
 
-
-
+    delete game;
     return 0;
 }
