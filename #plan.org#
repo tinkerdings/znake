@@ -1,0 +1,54 @@
+* SNAKE GAME
+
+** Minimum requirements:
+1. [X] Deltatime should be implemented
+2. [X] The snake consists of a head and n segments following the same path as the head
+3. [ ] There is a goal the snake must collide with to grow in size
+4. [X] The snake moves one head length at a time
+5. [ ] if the snake collides with the goal, it increases one segment in length
+6. [ ] The goal respawns at a new random location when the snake collides with it
+7. [X] If the snake collides with itself, or the edge of the level screen, the game terminates
+8. [ ] The final solution must be executable, with instructions of how to run
+
+** Process
+- [X] *(EST 04h00m)* Planning, Schedule
+- [X] Define application environment settings
+- [X] *(EST 02h00m)* Game class
+- [X] *(EST 00h30m)* Create window, that polls for events
+  - [X] Window class, window based on settings as parameters
+- [X] *(EST 00h30m)* functions for handling deltatime
+- [X] *(EST 01h30m)* functionality to handle input from user
+  - [X] specify game keys
+- [X] *(EST 01h00m)* simple state machine
+- [-] Snake class
+  - [X] *(EST 02h00m)* input checking
+  - [X] *(EST 01h00m)* dynamic array for body cells
+  - [X] *(EST 06h00m)* tile movement logic
+  - [-] *(EST 04h00m)* collision checking
+    - [ ] increase size if collided with goal
+    - [X] game over if collided with self or boundary
+- [ ] *(EST 02h00m)* Pickup class (goal)
+  - [ ] change position if collided with snake
+- [X] *(EST 05h00m)* rendering functionality. To render snake and pickup
+  - [X] Create Assets
+  - [X] Textures
+- [X] *(EST 03h00m)* Implement font rendering
+- [X] *(EST 01h00m)* Render text instructions for user, in each state
+  
+** Application environment setting
+*** TILESIZE: 16x16px
+*** LEVELSIZE: 64x64 tiles
+*** NO UI, LEVEL SCREEN TAKES UP ENTIRE WINDOW
+*** GAME STATES: STATE_SPLASH, STATE_PLAY, STATE_PAUSE, STATE_GAME_OVER
+**** State Relations
+***** STATE_SPLASH:
+- (input(RET) OR input(p)) -> STATE_PLAY
+- (input(ESC) OR input(q)) -> STATE_APPLICATION_EXIT
+***** STATE_PLAY:
+- input(ESC) -> STATE_PAUSE
+***** STATE_PAUSE:
+- (input(ESC) OR input(p)) -> STATE_PLAY
+- input(q) -> STATE_SPLASH
+***** STATE_GAME_OVER:
+- input(r) -> STATE_PLAY (reset game)
+- (input(ESC) OR input(q)) -> STATE_SPLASH

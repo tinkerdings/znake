@@ -39,17 +39,26 @@ void Renderer::render_game_border()
     SDL_RenderDrawRect(sdl_p, &game_border);
 }
 
+void Renderer::render_pickup(uint32_t pos_cell_x, uint32_t pos_cell_y, uint8_t tilesize)
+{
+        render_text(FONT_NORMAL, STYLE_3D_RB,
+    		"$",
+    		tilesize/2 + game_border.x + pos_cell_x * tilesize,
+    		tilesize/2 + game_border.y + pos_cell_y * tilesize,
+    		tilesize, tilesize, 255, 255, 64);
+}
+
 void Renderer::render_snake(Snake *snake, uint8_t tilesize, uint16_t width_n_tiles)
 {
-    Renderer::render_text(FONT_NORMAL, STYLE_3D_RB,
+    render_text(FONT_NORMAL, STYLE_3D_RB,
 			  "@",
 			  tilesize/2 + game_border.x + snake->segments[0].pos_cell_x * tilesize,
 			  tilesize/2 + game_border.y + snake->segments[0].pos_cell_y * tilesize,
 			  tilesize, tilesize, 64, 255, 64);
     for(auto i = 1; i < snake->segments.size(); i++)
     {
-	Renderer::render_text(FONT_NORMAL, STYLE_3D_RB,
-			    "+",
+	render_text(FONT_NORMAL, STYLE_3D_RB,
+			    "#",
 			    tilesize/2 + game_border.x + snake->segments[i].pos_cell_x * tilesize,
 			    tilesize/2 + game_border.y + snake->segments[i].pos_cell_y * tilesize,
 			    tilesize, tilesize, 64, 255, 64);

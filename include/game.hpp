@@ -1,12 +1,11 @@
-#ifndef GAME_H
-#define GAME_H
+#ifndef GAME_HPP
+#define GAME_HPP
 #include <SDL2/SDL.h>
 #include <cstdint>
 #include "deltatime.hpp"
 #include "snake.hpp"
 #include "window.hpp"
 #include "renderer.hpp"
-#include "tile.hpp"
 
 enum State
 {
@@ -24,6 +23,7 @@ public:
     void state_play();
     void state_pause();
     void state_game_over();
+    void position_pickup();
 
 private:
     Tile *tiles;
@@ -39,6 +39,10 @@ private:
     uint16_t score;
     Snake *snake;
     Timer timer_snake;
+    uint32_t snake_delay;
+    uint32_t pickup_pos_cell_x;
+    uint32_t pickup_pos_cell_y;
+    uint32_t pickup_index;
 };
 
 #endif // GAME_H

@@ -1,5 +1,6 @@
 #include "snake.hpp"
 
+
 Snake::Snake(Direction direction,
 	     Tile *tiles, uint16_t width_n_tiles, uint16_t height_n_tiles,
 	     uint16_t tile_x, uint16_t tile_y)
@@ -80,6 +81,15 @@ void Snake::handle_input(InputHandler *input)
     }
 }
 
+void Snake::add_segment()
+{
+    SnakeSegment segment = SnakeSegment();
+    SnakeSegment end = segments[segments.size()-1];
+    segment.pos_cell_x = end.pos_cell_x;
+    segment.pos_cell_y = end.pos_cell_y;
+    segments.push_back(segment);
+}
+
 Tile Snake::check_next_collision()
 {
     int32_t plus_x;
@@ -127,7 +137,7 @@ Tile Snake::check_next_collision()
     return tiles[tiles_index];
 }
 
-void Snake::update()
+Tile Snake::update()
 {
     for(auto itr = segments.end(); itr != segments.begin(); itr--)
     {
@@ -135,43 +145,36 @@ void Snake::update()
 	itr->pos_cell_y = (itr-1)->pos_cell_y;
     }
     Tile collision = check_next_collision();
-    switch(collision)
+    if(collision == PICKUP)
     {
-	case(EMPTY):
+	add_segment();
+    }
+    else if(collision == EMPTY)
+    {
+	switch(direction)
 	{
-	    switch(direction)
+	    case(UP):
 	    {
-		case(UP):
-		{
-		    segments[0].pos_cell_y--;
-		    break;
-		}
-		case(DOWN):
-		{
-		    segments[0].pos_cell_y++;
-		    break;
-		}
-		case(LEFT):
-		{
-		    segments[0].pos_cell_x--;
-		    break;
-		}
-		case(RIGHT):
-		{
-		    segments[0].pos_cell_x++;
-		    break;
-		}
+		segments[0].pos_cell_y--;
+		break;
 	    }
-	    break;
-	}
-	case(PICKUP):
-	{
-	    break;
-	}
-	case(SNAKE):
-	case(OUT_OF_BOUNDS):
-	{
-	    break;
+	    case(DOWN):
+	    {
+		segments[0].pos_cell_y++;
+		break;
+	    }
+	    case(LEFT):
+	    {
+		segments[0].pos_cell_x--;
+		break;
+	    }
+	    case(RIGHT):
+	    {
+		segments[0].pos_cell_x++;
+		break;
+	    }
 	}
     }
+
+    return collision;
 }

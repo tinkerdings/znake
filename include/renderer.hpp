@@ -6,6 +6,7 @@
 #include <SDL2/SDL_ttf.h>
 #include "snake.hpp"
 #include "window.hpp"
+#include "pickup.hpp"
 
 enum FontType
 {
@@ -25,6 +26,7 @@ public:
     void swap_buf();
     void render_game_border();
     void render_snake(Snake *snake, uint8_t tilesize, uint16_t width_n_tiles);
+    void render_pickup(uint32_t pos_cell_x, uint32_t pos_cell_y, uint8_t tilesize);
     void render_text(
 		     FontType font_type, FontStyle font_style,
 		     const char *str,

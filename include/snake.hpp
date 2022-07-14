@@ -26,7 +26,8 @@ public:
     ~Snake(){};
     Tile check_next_collision();
     void handle_input(InputHandler *input);
-    void update();
+    Tile update();
+    void add_segment();
     std::vector<SnakeSegment> segments;
     Direction direction;
 private:
