@@ -32,6 +32,7 @@ private:
     uint16_t height_n_tiles;
     State state;
     bool quit;
+    uint16_t score;
 };
 
 #endif // GAME_H

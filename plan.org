@@ -13,7 +13,7 @@
 ** Process
 - [X] *(EST 04h00m)* Planning, Schedule
 - [X] Define application environment settings
-- [ ] *(EST 02h00m)* Game class
+- [X] *(EST 02h00m)* Game class
 - [X] *(EST 00h30m)* Create window, that polls for events
   - [X] Window class, window based on settings as parameters
 - [X] *(EST 00h30m)* functions for handling deltatime
@@ -32,8 +32,8 @@
 - [-] *(EST 05h00m)* rendering functionality. To render snake and pickup
   - [X] Create Assets
   - [ ] Textures
-- [ ] *(EST 03h00m)* Implement font rendering
-- [ ] *(EST 01h00m)* Render text instructions for user, in each state
+- [X] *(EST 03h00m)* Implement font rendering
+- [X] *(EST 01h00m)* Render text instructions for user, in each state
   
 ** Application environment setting
 *** TILESIZE: 16x16px

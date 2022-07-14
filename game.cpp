@@ -1,5 +1,7 @@
 #include <SDL2/SDL.h>
 #include <cstdlib>
+#include <cmath>
+#include <string>
 #include <iostream>
 #include "game.hpp"
 
@@ -102,6 +104,8 @@ void Game::state_splash()
 
 void Game::state_reset_game()
 {
+    score = 0;
+
     state = STATE_PLAY;
 
     rdr->clear(0, 0, 255);
@@ -116,6 +120,13 @@ void Game::state_play()
     }
 
     rdr->clear(32, 32, 32);
+
+    rdr->render_text(
+		     FONT_NORMAL, STYLE_3D_RG, std::to_string(score++).c_str(),
+		     wnd->get_width()/2, 4*tilesize,
+		     2*((uint16_t)log10(score)+1)*tilesize, 2*tilesize,
+		     64, 32, 255);
+
     rdr->swap_buf();
 }
 
@@ -132,6 +143,12 @@ void Game::state_pause()
     }
 
     rdr->clear(32, 32, 32);
+
+    rdr->render_text(
+		     FONT_NORMAL, STYLE_3D_RG, std::to_string(score).c_str(),
+		     wnd->get_width()/2, 4*tilesize,
+		     2*((uint16_t)log10(score)+1)*tilesize, 2*tilesize,
+		     64, 32, 255);
 
     rdr->render_text(
 		     FONT_TITLE, STYLE_3D_GB, "PaUsEd",
