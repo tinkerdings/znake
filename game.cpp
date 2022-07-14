@@ -15,9 +15,17 @@ Game::Game(uint8_t tilesz, uint16_t w_n_tiles, uint16_t h_n_tiles) :
         exit(1);
     }
 
-    wnd = new Window("Snake", tilesize*width_n_tiles, tilesize*height_n_tiles);
-    rdr = new Renderer(wnd, 200, 200);
+    wnd = new Window("Snake", tilesize*(width_n_tiles + 2), tilesize*(height_n_tiles + 8));
+    SDL_Rect game_border = {.x = tilesize, .y = tilesize * 7, .w = width_n_tiles * tilesize, .h = height_n_tiles * tilesize};
+    rdr = new Renderer(wnd, game_border, 200, 200);
     input = new InputHandler();
+
+    tiles = (Tile*)calloc(width_n_tiles*height_n_tiles, sizeof(uint32_t));
+    if(tiles == NULL)
+    {
+	std::cout << "Failed to allocate tiles array" << std::endl;
+	exit(1);
+    }
 
     state = STATE_SPLASH;
 
@@ -26,6 +34,8 @@ Game::Game(uint8_t tilesz, uint16_t w_n_tiles, uint16_t h_n_tiles) :
 
 Game::~Game()
 {
+    free(tiles);
+    delete snake;
     delete input;
     delete rdr;
     delete wnd;
@@ -65,6 +75,7 @@ void Game::run()
 		break;
 	    }
 	}
+
     }
 }
 
@@ -79,7 +90,7 @@ void Game::state_splash()
 	state = STATE_RESET_GAME;
     }
 
-    rdr->clear(32, 32, 32);
+    rdr->clear(0, 0, 0);
 
     rdr->render_text(
 		     FONT_TITLE, STYLE_3D_RB, "SnAkE",
@@ -105,10 +116,12 @@ void Game::state_splash()
 void Game::state_reset_game()
 {
     score = 0;
+    snake = new Snake(UP, width_n_tiles/2, height_n_tiles/2);
+    timer_snake.start();
 
     state = STATE_PLAY;
 
-    rdr->clear(0, 0, 255);
+    rdr->clear(0, 0, 0);
     rdr->swap_buf();
 }
 
@@ -119,13 +132,25 @@ void Game::state_play()
 	state = STATE_PAUSE;
     }
 
-    rdr->clear(32, 32, 32);
+    snake->handle_input(input);
+
+    if(timer_snake.diff() > 100)
+    {
+	timer_snake.reset();
+	snake->update();
+    }
+
+    rdr->clear(0, 0, 0);
+
+    rdr->render_snake(snake, tilesize, width_n_tiles);
 
     rdr->render_text(
 		     FONT_NORMAL, STYLE_3D_RG, std::to_string(score++).c_str(),
 		     wnd->get_width()/2, 4*tilesize,
 		     2*((uint16_t)log10(score)+1)*tilesize, 2*tilesize,
 		     64, 32, 255);
+
+    rdr->render_game_border();
 
     rdr->swap_buf();
 }
@@ -142,7 +167,9 @@ void Game::state_pause()
 	state = STATE_SPLASH;
     }
 
-    rdr->clear(32, 32, 32);
+    rdr->clear(0, 0, 0);
+
+    rdr->render_snake(snake, tilesize, width_n_tiles);
 
     rdr->render_text(
 		     FONT_NORMAL, STYLE_3D_RG, std::to_string(score).c_str(),
@@ -168,12 +195,14 @@ void Game::state_pause()
 		     12*tilesize, 2*tilesize,
 		     255, 64, 64);
     
+    rdr->render_game_border();
+
     rdr->swap_buf();
 }
 
 void Game::state_game_over()
 {
 
-    rdr->clear(255, 0, 0);
+    rdr->clear(0, 0, 0);
     rdr->swap_buf();
 }

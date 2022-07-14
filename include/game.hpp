@@ -2,8 +2,15 @@
 #define GAME_H
 #include <SDL2/SDL.h>
 #include <cstdint>
+#include "deltatime.hpp"
+#include "snake.hpp"
 #include "window.hpp"
 #include "renderer.hpp"
+
+enum Tile
+{
+    EMPTY, PICKUP, SNAKE
+};
 
 enum State
 {
@@ -23,6 +30,7 @@ public:
     void state_game_over();
 
 private:
+    Tile *tiles;
     Renderer *rdr;
     SDL_Event evt;
     Window *wnd;
@@ -33,6 +41,8 @@ private:
     State state;
     bool quit;
     uint16_t score;
+    Snake *snake;
+    Timer timer_snake;
 };
 
 #endif // GAME_H

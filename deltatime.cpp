@@ -1,31 +1,31 @@
 #include <SDL2/SDL.h>
 #include "deltatime.hpp"
 
-void set_deltatime()
-{
-    prev = curr;
-    curr = SDL_GetPerformanceCounter();
+//void set_deltatime()
+//{
+//    prev = curr;
+//    curr = SDL_GetPerformanceCounter();
+//
+//    deltatime = (double)((curr - prev)*1000 / (double)SDL_GetPerformanceFrequency());
+//}
 
-    deltatime = (double)((curr - prev)*1000 / (double)SDL_GetPerformanceFrequency());
-}
-
-void Timer::start_timer()
+void Timer::start()
 {
   this->prev = SDL_GetPerformanceCounter();
 }
 
-void Timer::update_timer()
+void Timer::update()
 {
   this->curr = SDL_GetPerformanceCounter();
 }
 
-void Timer::time_diff()
+double Timer::diff()
 {
-  this->update_timer();
+  this->update();
   return ((double)((this->curr - this->prev)*1000 / (double)SDL_GetPerformanceFrequency()));
 }
 
-void Timer::reset_timer()
+void Timer::reset()
 {
   this->prev = this->curr;
 }

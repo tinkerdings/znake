@@ -3,16 +3,16 @@
 
 #include <cstdint>
 
-extern double deltatime;
-void set_deltatime();
+//extern double deltatime;
+//void set_deltatime();
 
 class Timer
 {
  public:
-  void start_timer();
-  void update_timer();
-  void time_diff();
-  void reset_timer();
+  void start();
+  void update();
+  double diff();
+  void reset();
  private:
   uint64_t prev;
   uint64_t curr;

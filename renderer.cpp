@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include "renderer.hpp"
 
-Renderer::Renderer(Window *wnd, uint8_t font_size_title, uint8_t font_size_normal)
+Renderer::Renderer(Window *wnd, SDL_Rect game_border, uint8_t font_size_title, uint8_t font_size_normal)
 {
     sdl_p = SDL_CreateRenderer(wnd->sdl_p, -1, SDL_RENDERER_ACCELERATED);
     if(!sdl_p)
@@ -10,6 +10,8 @@ Renderer::Renderer(Window *wnd, uint8_t font_size_title, uint8_t font_size_norma
 	std::cout << "Failed to create SDL_Renderer: " << SDL_GetError() << std::endl;
 	exit(1);
     }
+
+    this->game_border = game_border;
 
     if(TTF_Init() < 0)
     {
@@ -29,6 +31,29 @@ Renderer::Renderer(Window *wnd, uint8_t font_size_title, uint8_t font_size_norma
 	exit(1);
     }
 
+}
+
+void Renderer::render_game_border()
+{
+    SDL_SetRenderDrawColor(sdl_p, 255, 255, 255, 255);
+    SDL_RenderDrawRect(sdl_p, &game_border);
+}
+
+void Renderer::render_snake(Snake *snake, uint8_t tilesize, uint16_t width_n_tiles)
+{
+    Renderer::render_text(FONT_NORMAL, STYLE_3D_RB,
+			  "@",
+			  tilesize/2 + game_border.x + snake->segments[0].pos_cell_x * tilesize,
+			  tilesize/2 + game_border.y + snake->segments[0].pos_cell_y * tilesize,
+			  tilesize, tilesize, 64, 255, 64);
+    for(auto i = 1; i < snake->segments.size(); i++)
+    {
+	Renderer::render_text(FONT_NORMAL, STYLE_3D_RB,
+			    "+",
+			    tilesize/2 + game_border.x + snake->segments[i].pos_cell_x * tilesize,
+			    tilesize/2 + game_border.y + snake->segments[i].pos_cell_y * tilesize,
+			    tilesize, tilesize, 64, 255, 64);
+    }
 }
 
 void Renderer::render_text(
