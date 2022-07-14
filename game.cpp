@@ -27,6 +27,8 @@ Game::Game(uint8_t tilesz, uint16_t w_n_tiles, uint16_t h_n_tiles) :
 	exit(1);
     }
 
+    score = 0;
+
     state = STATE_SPLASH;
 
     quit = false;
@@ -116,7 +118,7 @@ void Game::state_splash()
 void Game::state_reset_game()
 {
     score = 0;
-    snake = new Snake(UP, width_n_tiles/2, height_n_tiles/2);
+    snake = new Snake(UP, tiles, width_n_tiles, height_n_tiles, width_n_tiles/2, height_n_tiles/2);
     timer_snake.start();
 
     state = STATE_PLAY;
@@ -134,7 +136,7 @@ void Game::state_play()
 
     snake->handle_input(input);
 
-    if(timer_snake.diff() > 100)
+    if(timer_snake.diff() > 150)
     {
 	timer_snake.reset();
 	snake->update();
@@ -145,7 +147,7 @@ void Game::state_play()
     rdr->render_snake(snake, tilesize, width_n_tiles);
 
     rdr->render_text(
-		     FONT_NORMAL, STYLE_3D_RG, std::to_string(score++).c_str(),
+		     FONT_NORMAL, STYLE_3D_RG, std::to_string(score).c_str(),
 		     wnd->get_width()/2, 4*tilesize,
 		     2*((uint16_t)log10(score)+1)*tilesize, 2*tilesize,
 		     64, 32, 255);

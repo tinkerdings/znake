@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <vector>
 #include "input_handler.hpp"
+#include "tile.hpp"
 
 enum Direction
 {
@@ -19,12 +20,19 @@ struct SnakeSegment
 class Snake
 {
 public:
-    Snake(Direction direction, uint16_t tile_x, uint16_t tile_y);
+    Snake(Direction direction,
+	  Tile* tiles, uint16_t width_n_tiles, uint16_t height_n_tiles,
+	  uint16_t tile_x, uint16_t tile_y);
     ~Snake(){};
+    Tile check_next_collision();
     void handle_input(InputHandler *input);
     void update();
     std::vector<SnakeSegment> segments;
     Direction direction;
+private:
+    Tile *tiles;
+    uint16_t width_n_tiles;
+    uint16_t height_n_tiles;
 };
 
 #endif // SNAKE_HPP

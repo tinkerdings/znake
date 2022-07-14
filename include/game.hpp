@@ -6,11 +6,7 @@
 #include "snake.hpp"
 #include "window.hpp"
 #include "renderer.hpp"
-
-enum Tile
-{
-    EMPTY, PICKUP, SNAKE
-};
+#include "tile.hpp"
 
 enum State
 {

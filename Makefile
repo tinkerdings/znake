@@ -18,6 +18,7 @@ _DEPS += input_handler.hpp# header files
 _DEPS += renderer.hpp# header files
 _DEPS += snake.hpp# header files
 _DEPS += deltatime.hpp# header files
+_DEPS += tile.hpp# header files
 DEPS = $(patsubst %,$(INCLDIR)/%,$(_DEPS))
 
 _OBJS = main.o# obj files
