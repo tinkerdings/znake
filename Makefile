@@ -2,7 +2,7 @@
 
 INCLDIR = ./include
 CC = g++
-CFLAGS = -O0 -Wall
+CFLAGS = -O0 -g -Wall
 CFLAGS += -I$(INCLDIR)
 LINK = -lm -lSDL2 -lSDL2_image -lSDL2_ttf# libs
 CFLAGS += $(LINK)
@@ -12,15 +12,17 @@ OUT = $(OUTDIR)/$(OUTNAME)#executable
 
 OBJDIR = ./obj
 
-_DEPS = window.h# header files
-_DEPS += game.h# header files
-_DEPS += input_handler.h# header files
+_DEPS = window.hpp# header files
+_DEPS += game.hpp# header files
+_DEPS += input_handler.hpp# header files
+_DEPS += renderer.hpp# header files
 DEPS = $(patsubst %,$(INCLDIR)/%,$(_DEPS))
 
 _OBJS = main.o# obj files
 _OBJS += window.o# obj files
 _OBJS += game.o# obj files
 _OBJS += input_handler.o# obj files
+_OBJS += renderer.o# obj files
 OBJS = $(patsubst %,$(OBJDIR)/%,$(_OBJS))
 
 $(OBJDIR)/%.o: %.cpp $(DEPS)
