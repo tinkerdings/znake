@@ -120,8 +120,8 @@ void Renderer::render_text(
 	    }
 	}
 
-	rand_off_x = rand_range(-4, 4);
-	rand_off_y = rand_range(-4, 4);
+	rand_off_x = rand_range(-1, 1);
+	rand_off_y = rand_range(-1, 1);
 	half_rand_off_x = rand_off_x / 2;
 	half_rand_off_y = rand_off_y / 2;
 	Renderer::render_text(
@@ -149,8 +149,8 @@ void Renderer::render_text(
     }
     SDL_FreeSurface(srf_txt);
 
-    rand_off_x = rand_range(-2, 2);
-    rand_off_y = rand_range(-2, 2);
+    rand_off_x = rand_range(-1, 1);
+    rand_off_y = rand_range(-1, 1);
 
     SDL_Rect rect =
 	{
@@ -163,6 +163,44 @@ void Renderer::render_text(
     SDL_RenderCopy(sdl_p, text, NULL, &rect);
 
     SDL_DestroyTexture(text);
+}
+
+void Renderer::render_tiles_debug(Tile *tiles, uint8_t tilesize, uint32_t width_n_tiles, uint32_t height_n_tiles)
+{
+    for(int r = 0; r < height_n_tiles; r++)
+    {
+	for(int c = 0; c < width_n_tiles; c++)
+	{
+	    switch(tiles[(r*width_n_tiles) + c])
+	    {
+		case(EMPTY):
+		{
+		    SDL_SetRenderDrawColor(sdl_p, 64, 64, 64, 255);
+		    break;
+		}
+		case(PICKUP):
+		{
+		    SDL_SetRenderDrawColor(sdl_p, 255, 128, 0, 255);
+
+		    break;
+		}
+		case(SNAKE):
+		{
+		    SDL_SetRenderDrawColor(sdl_p, 0, 255, 0, 255);
+
+		    break;
+		}
+		case(OUT_OF_BOUNDS):
+		{
+		    SDL_SetRenderDrawColor(sdl_p, 255, 0, 0, 255);
+
+		    break;
+		}
+	    }
+	    SDL_Rect rect = {game_border.x + c * tilesize, game_border.y + r * tilesize, tilesize, tilesize};
+	    SDL_RenderFillRect(sdl_p, &rect);
+	}
+    }
 }
 
 Renderer::~Renderer()

@@ -32,17 +32,16 @@ private:
     Window *wnd;
     InputHandler *input;
     uint8_t tilesize;
-    uint16_t width_n_tiles;
-    uint16_t height_n_tiles;
+    uint32_t width_n_tiles;
+    uint32_t height_n_tiles;
     State state;
     bool quit;
     uint16_t score;
     Snake *snake;
     Timer timer_snake;
-    uint32_t snake_delay;
-    uint32_t pickup_pos_cell_x;
-    uint32_t pickup_pos_cell_y;
-    uint32_t pickup_index;
+    volatile uint32_t pickup_pos_cell_x;
+    volatile uint32_t pickup_pos_cell_y;
+    volatile uint32_t pickup_index;
 };
 
 #endif // GAME_H

@@ -31,8 +31,6 @@ Game::Game(uint8_t tilesz, uint16_t w_n_tiles, uint16_t h_n_tiles) :
 	exit(1);
     }
 
-    snake_delay = 150;
-
     score = 0;
 
     state = STATE_SPLASH;
@@ -113,10 +111,10 @@ void Game::state_splash()
 		     32, 255, 64);
 
     rdr->render_text(
-		     FONT_NORMAL, STYLE_3D_GB, "[ESC/Q] to quit",
+		     FONT_NORMAL, STYLE_3D_GB, "[ESC] or [Q] to quit",
 		     wnd->get_width()/2, wnd->get_height() - 8*tilesize,
-		     32*tilesize, 4*tilesize,
-		     255, 64, 64);
+		     16*tilesize, 2*tilesize,
+		     255, 255, 64);
 
     rdr->swap_buf();
 }
@@ -124,12 +122,14 @@ void Game::state_splash()
 void Game::state_reset_game()
 {
     score = 0;
+
     if(snake != NULL)
     {
 	delete snake;
     }
+
     snake = new Snake(UP, tiles, width_n_tiles, height_n_tiles, width_n_tiles/2, height_n_tiles/2);
-    // memset(tiles, 0, width_n_tiles*height_n_tiles*sizeof(uint32_t));
+    memset(tiles, 0, width_n_tiles*height_n_tiles*sizeof(Tile));
     timer_snake.start();
 
     position_pickup();
@@ -149,32 +149,50 @@ void Game::state_play()
 
     snake->handle_input(input);
 
-    if(timer_snake.diff() > snake_delay)
+    if(timer_snake.diff() > snake->delay)
     {
-	timer_snake.reset();
-	Tile snake_collision = snake->update();
-	uint32_t snake_last_index =
-	    snake->segments[snake->segments.size()-1].pos_cell_y*width_n_tiles +
-	    snake->segments[snake->segments.size()-1].pos_cell_x;
+	uint32_t snake_head_index = snake->segments[0].pos_cell_y*width_n_tiles+snake->segments[0].pos_cell_x;
+	uint32_t snake_tail_index = snake->segments[snake->segments.size()-1].pos_cell_y*width_n_tiles+snake->segments[snake->segments.size()-1].pos_cell_x;
+
+	Tile snake_collision = snake->check_next_collision();
+
 	switch(snake_collision)
 	{
+	    case(EMPTY):
+	    {
+		snake->potential_death = false;
+		snake->update();
+		tiles[snake_head_index] = SNAKE;
+		tiles[snake_tail_index] = EMPTY;
+		break;
+	    }
 	    case(OUT_OF_BOUNDS):
 	    case(SNAKE):
 	    {
-		state = STATE_GAME_OVER;
+		if(snake->potential_death)
+		{
+		    state = STATE_GAME_OVER;
+		    break;
+		}
+		snake->potential_death = true;
+
 		break;
 	    }
 	    case(PICKUP):
 	    {
-		snake_delay *= 0.98;
-		position_pickup();
+		snake->potential_death = false;
 		score++;
+
+		position_pickup();
+
+		tiles[snake_head_index] = SNAKE;
+		snake->add_segment();
+		snake->update();
 		break;
 	    }
 	}
-	uint32_t tiles_index = snake->segments[1].pos_cell_y*width_n_tiles+snake->segments[1].pos_cell_x;
-	tiles[tiles_index] = SNAKE;
-	tiles[snake_last_index] = EMPTY;
+
+	timer_snake.reset();
     }
 
     rdr->clear(0, 0, 0);
@@ -186,7 +204,7 @@ void Game::state_play()
 		     FONT_NORMAL, STYLE_3D_RG, std::to_string(score).c_str(),
 		     wnd->get_width()/2, 4*tilesize,
 		     2*((uint16_t)log10(score)+1)*tilesize, 2*tilesize,
-		     64, 32, 255);
+		     64, 64, 255);
 
     rdr->render_game_border();
 
@@ -207,6 +225,7 @@ void Game::state_pause()
 
     rdr->clear(0, 0, 0);
 
+    rdr->render_pickup(pickup_pos_cell_x, pickup_pos_cell_y, tilesize);
     rdr->render_snake(snake, tilesize, width_n_tiles);
 
     rdr->render_text(
@@ -231,7 +250,7 @@ void Game::state_pause()
 		     FONT_NORMAL, STYLE_3D_GB, "[Q] to quit",
 		     wnd->get_width()/2, wnd->get_height() - 4*tilesize,
 		     12*tilesize, 2*tilesize,
-		     255, 64, 64);
+		     255, 255, 64);
     
     rdr->render_game_border();
 
@@ -251,6 +270,16 @@ void Game::state_game_over()
 
     rdr->clear(0, 0, 0);
     rdr->render_text(
+		     FONT_NORMAL, STYLE_3D_RB, "SCORE:",
+		     wnd->get_width()/2, 4*tilesize,
+		     16*tilesize, 4*tilesize,
+		     32, 255, 64);
+    rdr->render_text(
+		     FONT_NORMAL, STYLE_3D_RB, std::to_string(score).c_str(),
+		     wnd->get_width()/2, 12*tilesize,
+		     8*((uint16_t)log10(score)+1)*tilesize, 8*tilesize,
+		     64, 32, 255);
+    rdr->render_text(
 		     FONT_TITLE, STYLE_3D_GB, "GaMe OvEr",
 		     wnd->get_width()/2, wnd->get_height()/2,
 		     40*tilesize, 8*tilesize,
@@ -265,15 +294,20 @@ void Game::state_game_over()
 		     FONT_NORMAL, STYLE_3D_GB, "[ESC] to quit",
 		     wnd->get_width()/2, wnd->get_height() - 4*tilesize,
 		     12*tilesize, 2*tilesize,
-		     255, 64, 64);
+		     255, 255, 64);
     rdr->swap_buf();
 }
 
 void Game::position_pickup()
 {
     tiles[pickup_index] = EMPTY;
-    pickup_pos_cell_x = rand_range(0, width_n_tiles);
-    pickup_pos_cell_y = rand_range(0, height_n_tiles);
-    pickup_index = pickup_pos_cell_y*width_n_tiles + pickup_pos_cell_x;
+    do
+    {
+	pickup_pos_cell_x = (uint32_t)rand_range(0, width_n_tiles);
+	pickup_pos_cell_y = (uint32_t)rand_range(0, height_n_tiles);
+	pickup_index = (pickup_pos_cell_y*width_n_tiles) + pickup_pos_cell_x;
+    }
+    while(tiles[pickup_index] != EMPTY);
+
     tiles[pickup_index] = PICKUP;
 }

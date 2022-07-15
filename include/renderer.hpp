@@ -27,6 +27,7 @@ public:
     void render_game_border();
     void render_snake(Snake *snake, uint8_t tilesize, uint16_t width_n_tiles);
     void render_pickup(uint32_t pos_cell_x, uint32_t pos_cell_y, uint8_t tilesize);
+    void render_tiles_debug(Tile *tiles, uint8_t tilesize, uint32_t width_n_tiles, uint32_t height_n_tiles);
     void render_text(
 		     FontType font_type, FontStyle font_style,
 		     const char *str,

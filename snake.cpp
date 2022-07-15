@@ -8,6 +8,10 @@ Snake::Snake(Direction direction,
     this->tiles = tiles;
     this->width_n_tiles = width_n_tiles;
     this->height_n_tiles = height_n_tiles;
+
+    potential_death = false;
+
+    delay = 120;
     
     SnakeSegment head = SnakeSegment();
     SnakeSegment body = SnakeSegment();
@@ -52,28 +56,28 @@ Snake::Snake(Direction direction,
 
 void Snake::handle_input(InputHandler *input)
 {
-    if(input->up.pressed())
+    if(input->up.hold())
     {
 	if(direction != DOWN)
 	{
 	    new_direction = UP;
 	}
     }
-    if(input->down.pressed())
+    if(input->down.hold())
     {
 	if(direction != UP)
 	{
 	    new_direction = DOWN;
 	}
     }
-    if(input->left.pressed())
+    if(input->left.hold())
     {
 	if(direction != RIGHT)
 	{
 	    new_direction = LEFT;
 	}
     }
-    if(input->right.pressed())
+    if(input->right.hold())
     {
 	if(direction != LEFT)
 	{
@@ -89,6 +93,7 @@ void Snake::add_segment()
     segment.pos_cell_x = end.pos_cell_x;
     segment.pos_cell_y = end.pos_cell_y;
     segments.push_back(segment);
+    delay *= 0.98;
 }
 
 Tile Snake::check_next_collision()
@@ -96,7 +101,7 @@ Tile Snake::check_next_collision()
     int32_t plus_x;
     int32_t plus_y;
 
-    switch(direction)
+    switch(new_direction)
     {
 	case(UP):
 	{
@@ -125,7 +130,7 @@ Tile Snake::check_next_collision()
     }
 
     int32_t tiles_index_x = segments[0].pos_cell_x + plus_x;
-    int32_t tiles_index_y = segments[0].pos_cell_y+plus_y;
+    int32_t tiles_index_y = segments[0].pos_cell_y + plus_y;
     int32_t tiles_index =
 	(tiles_index_y * width_n_tiles) + tiles_index_x;
 
@@ -138,45 +143,38 @@ Tile Snake::check_next_collision()
     return tiles[tiles_index];
 }
 
-Tile Snake::update()
+void Snake::update()
 {
-    for(auto itr = segments.end(); itr != segments.begin(); itr--)
+    auto itr = segments.end();
+
+    for(; itr != segments.begin(); itr--)
     {
 	itr->pos_cell_x = (itr-1)->pos_cell_x;
 	itr->pos_cell_y = (itr-1)->pos_cell_y;
     }
-    Tile collision = check_next_collision();
-    if(collision == PICKUP)
-    {
-	add_segment();
-    }
-    else if(collision == EMPTY)
-    {
-	switch(new_direction)
-	{
-	    case(UP):
-	    {
-		segments[0].pos_cell_y--;
-		break;
-	    }
-	    case(DOWN):
-	    {
-		segments[0].pos_cell_y++;
-		break;
-	    }
-	    case(LEFT):
-	    {
-		segments[0].pos_cell_x--;
-		break;
-	    }
-	    case(RIGHT):
-	    {
-		segments[0].pos_cell_x++;
-		break;
-	    }
-	}
-	direction = new_direction;
-    }
 
-    return collision;
+    switch(new_direction)
+    {
+	case(UP):
+	{
+	    segments[0].pos_cell_y--;
+	    break;
+	}
+	case(DOWN):
+	{
+	    segments[0].pos_cell_y++;
+	    break;
+	}
+	case(LEFT):
+	{
+	    segments[0].pos_cell_x--;
+	    break;
+	}
+	case(RIGHT):
+	{
+	    segments[0].pos_cell_x++;
+	    break;
+	}
+    }
+    direction = new_direction;
 }
