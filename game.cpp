@@ -99,11 +99,27 @@ void Game::state_splash()
     rdr->clear(0, 0, 0);
 
     rdr->render_text(
+		     FONT_NORMAL, STYLE_3D_RG, "by Markus",
+		     wnd->get_width()/2, wnd->get_height()/4 + 8*tilesize,
+		     16*tilesize, 1*tilesize,
+		     255, 255, 255);
+
+    rdr->render_text(
 		     FONT_TITLE, STYLE_3D_RB, "SnAkE",
 		     wnd->get_width()/2, wnd->get_height()/4,
 		     30*tilesize, 12*tilesize,
 		     64, 255, 32);
 
+    rdr->render_text(
+		     FONT_NORMAL, STYLE_3D_RG, "[WASD] or [ARROW-KEYS] to move",
+		     wnd->get_width()/2, wnd->get_height() - 24*tilesize,
+		     24*tilesize, 2*tilesize,
+		     32, 255, 255);
+    rdr->render_text(
+		     FONT_NORMAL, STYLE_3D_RB, "[ESC] in-game to pause",
+		     wnd->get_width()/2, wnd->get_height() - 22*tilesize,
+		     16*tilesize, 1*tilesize,
+		     32, 255, 255);
     rdr->render_text(
 		     FONT_NORMAL, STYLE_3D_RB, "[ENTER] to play",
 		     wnd->get_width()/2, wnd->get_height() - 16*tilesize,
@@ -275,7 +291,7 @@ void Game::state_game_over()
 		     16*tilesize, 4*tilesize,
 		     32, 255, 64);
     rdr->render_text(
-		     FONT_NORMAL, STYLE_3D_RB, std::to_string(score).c_str(),
+		     FONT_NORMAL, STYLE_3D_RG, std::to_string(score).c_str(),
 		     wnd->get_width()/2, 12*tilesize,
 		     8*((uint16_t)log10(score)+1)*tilesize, 8*tilesize,
 		     64, 32, 255);
