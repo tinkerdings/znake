@@ -7,7 +7,7 @@ CFLAGS += -I$(INCLDIR)
 LINK = -lm -lSDL2 -lSDL2_image -lSDL2_ttf# libs
 CFLAGS += $(LINK)
 OUTDIR = ./bin
-OUTNAME = snake
+OUTNAME = znake
 OUT = $(OUTDIR)/$(OUTNAME)#executable
 
 OBJDIR = ./obj
