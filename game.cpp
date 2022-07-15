@@ -263,14 +263,14 @@ void Game::state_game_over()
     {
 	state = STATE_RESET_GAME;
     }
-    if(input->escape.released())
+    if(input->escape.released() || input->quit.released())
     {
 	state = STATE_SPLASH;
     }
 
     rdr->clear(0, 0, 0);
     rdr->render_text(
-		     FONT_NORMAL, STYLE_3D_RB, "SCORE:",
+		     FONT_NORMAL, STYLE_3D_RB, "HIGHSCORE:",
 		     wnd->get_width()/2, 4*tilesize,
 		     16*tilesize, 4*tilesize,
 		     32, 255, 64);
@@ -291,7 +291,7 @@ void Game::state_game_over()
 		     32, 255, 64);
 
     rdr->render_text(
-		     FONT_NORMAL, STYLE_3D_GB, "[ESC] to quit",
+		     FONT_NORMAL, STYLE_3D_GB, "[ESC] or [Q] to quit",
 		     wnd->get_width()/2, wnd->get_height() - 4*tilesize,
 		     12*tilesize, 2*tilesize,
 		     255, 255, 64);

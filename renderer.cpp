@@ -36,8 +36,28 @@ Renderer::Renderer(Window *wnd, SDL_Rect game_border, uint8_t font_size_title, u
 
 void Renderer::render_game_border()
 {
+    int32_t min = -1;
+    int32_t max = 1;
+    int32_t x_off = rand_range(min, max);
+    int32_t y_off = rand_range(min, max);
+    SDL_Rect rect_a = {game_border.x + x_off, game_border.y + y_off, game_border.w, game_border.h};
+
+    x_off = rand_range(min, max);
+    y_off = rand_range(min, max);
+    SDL_Rect rect_b = {game_border.x + x_off, game_border.y + y_off, game_border.w, game_border.h};
+
+    x_off = rand_range(min, max);
+    y_off = rand_range(min, max);
+    SDL_Rect rect_c = {game_border.x + x_off, game_border.y + y_off, game_border.w, game_border.h};
+
+    SDL_SetRenderDrawColor(sdl_p, 255, 64, 64, 255);
+    SDL_RenderDrawRect(sdl_p, &rect_a);
+
+    SDL_SetRenderDrawColor(sdl_p, 64, 64, 255, 255);
+    SDL_RenderDrawRect(sdl_p, &rect_b);
+
     SDL_SetRenderDrawColor(sdl_p, 255, 255, 255, 255);
-    SDL_RenderDrawRect(sdl_p, &game_border);
+    SDL_RenderDrawRect(sdl_p, &rect_c);
 }
 
 void Renderer::render_pickup(uint32_t pos_cell_x, uint32_t pos_cell_y, uint8_t tilesize)

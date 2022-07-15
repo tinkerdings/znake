@@ -2,12 +2,12 @@
 
 ** Minimum requirements:
 1. [X] Deltatime should be implemented
-2. [ ] The snake consists of a head and n segments following the same path as the head
-3. [ ] There is a goal the snake must collide with to grow in size
-4. [ ] The snake moves one head length at a time
-5. [ ] if the snake collides with the goal, it increases one segment in length
-6. [ ] The goal respawns at a new random location when the snake collides with it
-7. [ ] If the snake collides with itself, or the edge of the level screen, the game terminates
+2. [X] The snake consists of a head and n segments following the same path as the head
+3. [X] There is a goal the snake must collide with to grow in size
+4. [X] The snake moves one head length at a time
+5. [X] if the snake collides with the goal, it increases one segment in length
+6. [X] The goal respawns at a new random location when the snake collides with it
+7. [X] If the snake collides with itself, or the edge of the level screen, the game terminates
 8. [ ] The final solution must be executable, with instructions of how to run
 
 ** Process
@@ -20,18 +20,18 @@
 - [X] *(EST 01h30m)* functionality to handle input from user
   - [X] specify game keys
 - [X] *(EST 01h00m)* simple state machine
-- [ ] Snake class
-  - [ ] *(EST 02h00m)* input checking
-  - [ ] *(EST 01h00m)* dynamic array for body cells
-  - [ ] *(EST 06h00m)* tile movement logic
-  - [ ] *(EST 04h00m)* collision checking
-    - [ ] increase size if collided with goal
-    - [ ] game over if collided with self or boundary
-- [ ] *(EST 02h00m)* Pickup class (goal)
-  - [ ] change position if collided with snake
-- [-] *(EST 05h00m)* rendering functionality. To render snake and pickup
+- [X] Snake class
+  - [X] *(EST 02h00m)* input checking
+  - [X] *(EST 01h00m)* dynamic array for body cells
+  - [X] *(EST 06h00m)* tile movement logic
+  - [X] *(EST 04h00m)* collision checking
+    - [X] increase size if collided with goal
+    - [X] game over if collided with self or boundary
+- [X] *(EST 02h00m)* Pickup class (goal)
+  - [X] change position if collided with snake
+- [X] *(EST 05h00m)* rendering functionality. To render snake and pickup
   - [X] Create Assets
-  - [ ] Textures
+  - [X] Textures
 - [X] *(EST 03h00m)* Implement font rendering
 - [X] *(EST 01h00m)* Render text instructions for user, in each state
   
