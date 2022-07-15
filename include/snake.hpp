@@ -30,6 +30,7 @@ public:
     void add_segment();
     std::vector<SnakeSegment> segments;
     Direction direction;
+    Direction new_direction;
 private:
     Tile *tiles;
     uint16_t width_n_tiles;

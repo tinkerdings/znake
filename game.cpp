@@ -124,7 +124,12 @@ void Game::state_splash()
 void Game::state_reset_game()
 {
     score = 0;
+    if(snake != NULL)
+    {
+	delete snake;
+    }
     snake = new Snake(UP, tiles, width_n_tiles, height_n_tiles, width_n_tiles/2, height_n_tiles/2);
+    memset(tiles, 0, width_n_tiles*height_n_tiles*sizeof(Tile));
     timer_snake.start();
 
     position_pickup();

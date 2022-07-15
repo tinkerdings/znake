@@ -13,6 +13,7 @@ Snake::Snake(Direction direction,
     SnakeSegment body = SnakeSegment();
 
     this->direction = direction;
+    this->new_direction = direction;
 
     head.pos_cell_x = tile_x;
     head.pos_cell_y = tile_y;
@@ -55,28 +56,28 @@ void Snake::handle_input(InputHandler *input)
     {
 	if(direction != DOWN)
 	{
-	    direction = UP;
+	    new_direction = UP;
 	}
     }
     if(input->down.pressed())
     {
 	if(direction != UP)
 	{
-	    direction = DOWN;
+	    new_direction = DOWN;
 	}
     }
     if(input->left.pressed())
     {
 	if(direction != RIGHT)
 	{
-	    direction = LEFT;
+	    new_direction = LEFT;
 	}
     }
     if(input->right.pressed())
     {
 	if(direction != LEFT)
 	{
-	    direction = RIGHT;
+	    new_direction = RIGHT;
 	}
     }
 }
@@ -151,7 +152,7 @@ Tile Snake::update()
     }
     else if(collision == EMPTY)
     {
-	switch(direction)
+	switch(new_direction)
 	{
 	    case(UP):
 	    {
@@ -174,6 +175,7 @@ Tile Snake::update()
 		break;
 	    }
 	}
+	direction = new_direction;
     }
 
     return collision;

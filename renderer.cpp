@@ -116,11 +116,11 @@ void Renderer::render_text(
 	}
 	Renderer::render_text(
 			      font_type, STYLE_NORMAL, str,
-			      x - 2, y - 2, w+4, h+4,
+			      x - 2, y - 2, w+8, h+8,
 			      color_3d_a.r, color_3d_a.g, color_3d_a.b);
 	Renderer::render_text(
 			      font_type, STYLE_NORMAL, str,
-			      x + 2, y + 2, w+4, h+4,
+			      x + 2, y + 2, w+8, h+8,
 			      color_3d_b.r, color_3d_b.g, color_3d_b.b);
     }
 
