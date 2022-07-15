@@ -129,7 +129,7 @@ void Game::state_reset_game()
 	delete snake;
     }
     snake = new Snake(UP, tiles, width_n_tiles, height_n_tiles, width_n_tiles/2, height_n_tiles/2);
-    memset(tiles, 0, width_n_tiles*height_n_tiles*sizeof(Tile));
+    // memset(tiles, 0, width_n_tiles*height_n_tiles*sizeof(uint32_t));
     timer_snake.start();
 
     position_pickup();

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include "renderer.hpp"
+#include "util.hpp"
 
 Renderer::Renderer(Window *wnd, SDL_Rect game_border, uint8_t font_size_title, uint8_t font_size_normal)
 {
@@ -74,6 +75,10 @@ void Renderer::render_text(
     TTF_Font *font;
     SDL_Color color_text = {.r = r, .g = g, .b = b, .a = 255};
     SDL_Surface *srf_txt;
+    int32_t rand_off_x;
+    int32_t rand_off_y;
+    int32_t half_rand_off_x;
+    int32_t half_rand_off_y;
 
     switch(font_type)
     {
@@ -114,13 +119,18 @@ void Renderer::render_text(
 		break;
 	    }
 	}
+
+	rand_off_x = rand_range(-4, 4);
+	rand_off_y = rand_range(-4, 4);
+	half_rand_off_x = rand_off_x / 2;
+	half_rand_off_y = rand_off_y / 2;
 	Renderer::render_text(
 			      font_type, STYLE_NORMAL, str,
-			      x - 2, y - 2, w+8, h+8,
+			      x - rand_off_x, y - rand_off_y, w+half_rand_off_x, h+half_rand_off_y,
 			      color_3d_a.r, color_3d_a.g, color_3d_a.b);
 	Renderer::render_text(
 			      font_type, STYLE_NORMAL, str,
-			      x + 2, y + 2, w+8, h+8,
+			      x + rand_off_x, y + rand_off_y, w+half_rand_off_x, h+half_rand_off_y,
 			      color_3d_b.r, color_3d_b.g, color_3d_b.b);
     }
 
@@ -139,10 +149,13 @@ void Renderer::render_text(
     }
     SDL_FreeSurface(srf_txt);
 
+    rand_off_x = rand_range(-2, 2);
+    rand_off_y = rand_range(-2, 2);
+
     SDL_Rect rect =
 	{
-	    .x = (int32_t)(x - w/2),
-	    .y = (int32_t)(y - h/2),
+	    .x = (int32_t)(x - w/2) + rand_off_x,
+	    .y = (int32_t)(y - h/2) + rand_off_y,
 	    .w = (int32_t)w,
 	    .h = (int32_t)h
 	};
