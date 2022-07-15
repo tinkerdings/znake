@@ -148,6 +148,9 @@ void Game::state_play()
     {
 	timer_snake.reset();
 	Tile snake_collision = snake->update();
+	uint32_t snake_last_index =
+	    snake->segments[snake->segments.size()-1].pos_cell_y*width_n_tiles +
+	    snake->segments[snake->segments.size()-1].pos_cell_x;
 	switch(snake_collision)
 	{
 	    case(OUT_OF_BOUNDS):
@@ -164,6 +167,9 @@ void Game::state_play()
 		break;
 	    }
 	}
+	uint32_t tiles_index = snake->segments[1].pos_cell_y*width_n_tiles+snake->segments[1].pos_cell_x;
+	tiles[tiles_index] = SNAKE;
+	tiles[snake_last_index] = EMPTY;
     }
 
     rdr->clear(0, 0, 0);
