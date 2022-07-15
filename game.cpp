@@ -105,7 +105,7 @@ void Game::state_splash()
 		     255, 255, 255);
 
     rdr->render_text(
-		     FONT_TITLE, STYLE_3D_RB, "SnAkE",
+		     FONT_TITLE, STYLE_3D_RB, "ZnAkE",
 		     wnd->get_width()/2, wnd->get_height()/4,
 		     30*tilesize, 12*tilesize,
 		     64, 255, 32);
