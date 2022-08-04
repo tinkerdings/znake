@@ -5,6 +5,7 @@
 
 Renderer::Renderer(Window *wnd, SDL_Rect game_border, uint8_t font_size_title, uint8_t font_size_normal)
 {
+    // Create SDL renderer
     sdl_p = SDL_CreateRenderer(wnd->sdl_p, -1, SDL_RENDERER_ACCELERATED);
     if(!sdl_p)
     {
@@ -14,11 +15,13 @@ Renderer::Renderer(Window *wnd, SDL_Rect game_border, uint8_t font_size_title, u
 
     this->game_border = game_border;
 
+    // Initialize SDL TTF for rendering fonts
     if(TTF_Init() < 0)
     {
 	std::cout << "Failed to init SDL_TTF: " << SDL_GetError() << std::endl;
 	exit(1);
     }
+    // Open fonts
     font_title = TTF_OpenFont("res/font/title_font.ttf", font_size_title);
     if(font_title == NULL)
     {
@@ -34,6 +37,8 @@ Renderer::Renderer(Window *wnd, SDL_Rect game_border, uint8_t font_size_title, u
 
 }
 
+// Renders game border, with glitch effect.
+// Glitch effect consists of three separate borders with different colors, and random offsets in position.
 void Renderer::render_game_border()
 {
     int32_t min = -1;
@@ -60,6 +65,7 @@ void Renderer::render_game_border()
     SDL_RenderDrawRect(sdl_p, &rect_c);
 }
 
+// Renders pickup as a dollar sign with font rendering.
 void Renderer::render_pickup(uint32_t pos_cell_x, uint32_t pos_cell_y, uint8_t tilesize)
 {
         render_text(FONT_NORMAL, STYLE_3D_RB,
@@ -69,6 +75,7 @@ void Renderer::render_pickup(uint32_t pos_cell_x, uint32_t pos_cell_y, uint8_t t
     		tilesize, tilesize, 255, 255, 64);
 }
 
+// Renders snake as font characters, @ for the head and # for the body
 void Renderer::render_snake(Snake *snake, uint8_t tilesize, uint16_t width_n_tiles)
 {
     render_text(FONT_NORMAL, STYLE_3D_RB,
@@ -86,6 +93,9 @@ void Renderer::render_snake(Snake *snake, uint8_t tilesize, uint16_t width_n_til
     }
 }
 
+// Renders text in specified style, normal is just normal text, but the 3D styles produces a cool glitch effect,
+// by rendering the text three times with different colors and random offsets in position.
+// it does this with recursion.
 void Renderer::render_text(
 			   FontType font_type, FontStyle font_style,
 			   const char *str,
@@ -154,6 +164,7 @@ void Renderer::render_text(
 			      color_3d_b.r, color_3d_b.g, color_3d_b.b);
     }
 
+    // Creates text SDL surface
     srf_txt = TTF_RenderText_Solid(font, str, color_text);
     if(srf_txt == NULL)
     {
@@ -161,6 +172,7 @@ void Renderer::render_text(
 	exit(1);
     }
 
+    // Creates texture from SDL surface
     SDL_Texture *text = SDL_CreateTextureFromSurface(sdl_p, srf_txt);
     if(text == NULL)
     {
@@ -180,49 +192,14 @@ void Renderer::render_text(
 	    .h = (int32_t)h
 	};
 
+    // Copies texture to backbuffer.
     SDL_RenderCopy(sdl_p, text, NULL, &rect);
 
+    // Destroy the texture.
     SDL_DestroyTexture(text);
 }
 
-void Renderer::render_tiles_debug(Tile *tiles, uint8_t tilesize, uint32_t width_n_tiles, uint32_t height_n_tiles)
-{
-    for(int r = 0; r < height_n_tiles; r++)
-    {
-	for(int c = 0; c < width_n_tiles; c++)
-	{
-	    switch(tiles[(r*width_n_tiles) + c])
-	    {
-		case(EMPTY):
-		{
-		    SDL_SetRenderDrawColor(sdl_p, 64, 64, 64, 255);
-		    break;
-		}
-		case(PICKUP):
-		{
-		    SDL_SetRenderDrawColor(sdl_p, 255, 128, 0, 255);
-
-		    break;
-		}
-		case(SNAKE):
-		{
-		    SDL_SetRenderDrawColor(sdl_p, 0, 255, 0, 255);
-
-		    break;
-		}
-		case(OUT_OF_BOUNDS):
-		{
-		    SDL_SetRenderDrawColor(sdl_p, 255, 0, 0, 255);
-
-		    break;
-		}
-	    }
-	    SDL_Rect rect = {game_border.x + c * tilesize, game_border.y + r * tilesize, tilesize, tilesize};
-	    SDL_RenderFillRect(sdl_p, &rect);
-	}
-    }
-}
-
+// Free allocated objects.
 Renderer::~Renderer()
 {
     SDL_DestroyRenderer(sdl_p);
@@ -230,11 +207,13 @@ Renderer::~Renderer()
     TTF_CloseFont(font_normal);
 }
 
+// Swap backbuffer.
 void Renderer::swap_buf()
 {
     SDL_RenderPresent(sdl_p);
 }
 
+// Clear screen
 void Renderer::clear(uint8_t r, uint8_t g, uint8_t b)
 {
     SDL_SetRenderDrawColor(sdl_p, r, g, b, 255);

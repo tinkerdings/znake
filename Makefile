@@ -1,43 +1,30 @@
-# Makefile template
-
-INCLDIR = ./include
 CC = g++
-CFLAGS = -O0 -g -Wall
-CFLAGS += -I$(INCLDIR)
-LINK = -lm -lSDL2 -lSDL2_image -lSDL2_ttf# libs
+INCLDIR = ./include
+CFLAGS = -O0 -g -Wall -I$(INCLDIR)
+LINK = -lm -lSDL2 -lSDL2_ttf
 CFLAGS += $(LINK)
 OUTDIR = ./bin
 OUTNAME = znake
-OUT = $(OUTDIR)/$(OUTNAME)#executable
+OUT = $(OUTDIR)/$(OUTNAME)
 
 OBJDIR = ./obj
 
-_DEPS = window.hpp# header files
-_DEPS += game.hpp# header files
-_DEPS += input_handler.hpp# header files
-_DEPS += renderer.hpp# header files
-_DEPS += snake.hpp# header files
-_DEPS += deltatime.hpp# header files
-_DEPS += tile.hpp# header files
-_DEPS += util.hpp# header files
-DEPS = $(patsubst %,$(INCLDIR)/%,$(_DEPS))
+OBJS =\
+main.o window.o game.o input_handler.o \
+renderer.o snake.o deltatime.o util.o
 
-_OBJS = main.o# obj files
-_OBJS += window.o# obj files
-_OBJS += game.o# obj files
-_OBJS += input_handler.o# obj files
-_OBJS += renderer.o# obj files
-_OBJS += snake.o# obj files
-_OBJS += deltatime.o# obj files
-_OBJS += util.o# obj files
-OBJS = $(patsubst %,$(OBJDIR)/%,$(_OBJS))
+$(OUT) : $(OBJS)
+	$(CC) -o $@ $(OBJS) $(CFLAGS)
 
-$(OBJDIR)/%.o: %.cpp $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+main.o : ./include/game.hpp
+window.o : ./include/window.hpp
+game.o : ./include/util.hpp ./include/game.hpp
+input_handler.o : ./include/input_handler.hpp
+renderer.o : ./include/renderer.hpp ./include/util.hpp
+snake.o : ./include/snake.hpp
+deltatime.o : ./include/deltatime.hpp
+util.o : ./include/util.hpp
 
-$(OUT): $(OBJS)
-	$(CC) -o $@ $^ $(CFLAGS)
-
-.PHONY: clean
-clean:
-	rm -f $(OBJDIR)/*.o *~ core $(INCLDIR)/*~ $(OUTDIR)/$(OUTNAME)
+.PHONY : clean
+clean :
+	rm -rf $(OUT) $(OBJS)

@@ -2,17 +2,21 @@
 #include <iostream>
 #include <iterator>
 
+// A key has a previous and current press state, to differentiate between key press, hold and release.
+// Sets default key state to up/neutral.
 Key::Key()
 {
     state_press_prev = false;
     state_press_curr = false;
 }
 
+// Adds keycode to be checked for game key.
 void Key::add_keycode(SDL_Keycode code)
 {
     keycode.push_back(code);
 }
 
+// Checks key event, pressed, hold, and released.
 bool Key::pressed()
 {
     return (!state_press_prev && state_press_curr);
@@ -28,6 +32,7 @@ bool Key::released()
     return (state_press_prev && !state_press_curr);
 }
 
+// Adds default keycodes to game keys.
 InputHandler::InputHandler()
 {
     up.add_keycode(SDLK_UP);
@@ -51,6 +56,7 @@ InputHandler::InputHandler()
     replay.add_keycode(SDLK_r);
 }
 
+// Sets default keycodes passed in for game keys.
 InputHandler::InputHandler(SDL_Keycode default_up, SDL_Keycode default_down,
 			   SDL_Keycode default_left, SDL_Keycode default_right,
 			   SDL_Keycode default_escape, SDL_Keycode default_action,
@@ -66,15 +72,17 @@ InputHandler::InputHandler(SDL_Keycode default_up, SDL_Keycode default_down,
     replay.add_keycode(default_replay);
 }
 
+// Update game keys prev and current press states.
 void InputHandler::update_keys(SDL_Event *evt)
 {
     SDL_PollEvent(evt);
 
     bool press = (evt->type == SDL_KEYDOWN);
     auto curr_keycode = evt->key.keysym.sym;
-    Key *temp[] = {&up, &down, &left, &right, &escape, &action, &quit, &replay, NULL};
+    // For looping over all game keys.
+    Key *temp[] = {&up, &down, &left, &right, &escape, &action, &quit, &replay, nullptr};
 
-    for(int i = 0; temp[i] != NULL; i++)
+    for(int i = 0; temp[i] != nullptr; i++)
     {
 	temp[i]->state_press_prev = temp[i]->state_press_curr;
 	for(auto itr = temp[i]->keycode.begin(); itr != temp[i]->keycode.end(); itr++)

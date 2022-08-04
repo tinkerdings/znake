@@ -39,9 +39,9 @@ private:
     uint16_t score;
     Snake *snake;
     Timer timer_snake;
-    uint32_t pickup_pos_cell_x;
-    uint32_t pickup_pos_cell_y;
-    uint32_t pickup_index;
+    volatile uint32_t pickup_pos_cell_x;
+    volatile uint32_t pickup_pos_cell_y;
+    volatile uint32_t pickup_index;
 };
 
 #endif // GAME_H

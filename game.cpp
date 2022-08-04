@@ -7,6 +7,7 @@
 #include "util.hpp"
 #include "game.hpp"
 
+// Creates window, initializes tiles && sets game state to menu screen.
 Game::Game(uint8_t tilesz, uint16_t w_n_tiles, uint16_t h_n_tiles) :
     tilesize{tilesz}, width_n_tiles{w_n_tiles}, height_n_tiles{h_n_tiles}
 {
@@ -17,13 +18,21 @@ Game::Game(uint8_t tilesz, uint16_t w_n_tiles, uint16_t h_n_tiles) :
         exit(1);
     }
 
+    // sets random seed, used by rand_range function.
     srand(time(NULL));
 
+    // Creates an SDL window.
     wnd = new Window("Snake", tilesize*(width_n_tiles + 2), tilesize*(height_n_tiles + 8));
+    // game board edges
     SDL_Rect game_border = {.x = tilesize, .y = tilesize * 7, .w = width_n_tiles * tilesize, .h = height_n_tiles * tilesize};
+    // contains rendering functions
     rdr = new Renderer(wnd, game_border, 200, 200);
+    // handles input.
     input = new InputHandler();
 
+    // Sets tile index of pickup object.
+    pickup_index = 0;
+    // allocates space for game tiles and sets them to EMPTY.
     tiles = (Tile*)calloc(width_n_tiles*height_n_tiles, sizeof(uint32_t));
     if(tiles == NULL)
     {
@@ -31,13 +40,17 @@ Game::Game(uint8_t tilesz, uint16_t w_n_tiles, uint16_t h_n_tiles) :
 	exit(1);
     }
 
+    // Sets beginning score to 0
     score = 0;
 
+    // STATE_SPLASH is menu screen.
     state = STATE_SPLASH;
 
+    // Makes sure the window does not close.
     quit = false;
 }
 
+// Deletes allocated objects.
 Game::~Game()
 {
     free(tiles);
@@ -47,6 +60,7 @@ Game::~Game()
     delete wnd;
 }
 
+// Checks which gamestate is current, and runs associated state function.
 void Game::run()
 {
     while(!quit)
@@ -85,8 +99,10 @@ void Game::run()
     }
 }
 
+// Menu state function
 void Game::state_splash()
 {
+    // Quit program.
     if(input->quit.released() || input->escape.released())
     {
 	quit = true;
@@ -96,8 +112,10 @@ void Game::state_splash()
 	state = STATE_RESET_GAME;
     }
 
+    // Clear screen
     rdr->clear(0, 0, 0);
 
+    // Render menu text
     rdr->render_text(
 		     FONT_NORMAL, STYLE_3D_RG, "by Markus",
 		     wnd->get_width()/2, wnd->get_height()/4 + 8*tilesize,
@@ -132,13 +150,17 @@ void Game::state_splash()
 		     16*tilesize, 2*tilesize,
 		     255, 255, 64);
 
+    // Swap backbuffer. to render next frame.
     rdr->swap_buf();
 }
 
+// gets runned before game starts or when restarted after game over
 void Game::state_reset_game()
 {
+    // reset score
     score = 0;
 
+    // Recreate snake object to reset values.
     if(snake != NULL)
     {
 	delete snake;
@@ -146,16 +168,20 @@ void Game::state_reset_game()
 
     snake = new Snake(UP, tiles, width_n_tiles, height_n_tiles, width_n_tiles/2, height_n_tiles/2);
     memset(tiles, 0, width_n_tiles*height_n_tiles*sizeof(Tile));
+    // reset snake update timer.
     timer_snake.start();
 
+    // reposition pickup at random location.
     position_pickup();
 
     state = STATE_PLAY;
 
+    // Clear screen
     rdr->clear(0, 0, 0);
     rdr->swap_buf();
 }
 
+// Play state, this is the state when playing the game.
 void Game::state_play()
 {
     if(input->escape.released())
@@ -163,17 +189,21 @@ void Game::state_play()
 	state = STATE_PAUSE;
     }
 
+    // Handle snake objects relevant input.
     snake->handle_input(input);
 
+    // update snake if timer has reached certain delay.
     if(timer_snake.diff() > snake->delay)
     {
 	uint32_t snake_head_index = snake->segments[0].pos_cell_y*width_n_tiles+snake->segments[0].pos_cell_x;
 	uint32_t snake_tail_index = snake->segments[snake->segments.size()-1].pos_cell_y*width_n_tiles+snake->segments[snake->segments.size()-1].pos_cell_x;
 
+	// Handle collision with different tiles.
 	Tile snake_collision = snake->check_next_collision();
 
 	switch(snake_collision)
 	{
+	    // No collision move ahead.
 	    case(EMPTY):
 	    {
 		snake->potential_death = false;
@@ -182,6 +212,7 @@ void Game::state_play()
 		tiles[snake_tail_index] = EMPTY;
 		break;
 	    }
+	    // might die on next step, since tile ahead is snake or out of bounds.
 	    case(OUT_OF_BOUNDS):
 	    case(SNAKE):
 	    {
@@ -194,6 +225,7 @@ void Game::state_play()
 
 		break;
 	    }
+	    // increase score and add a segment to the snake, hit pickup.
 	    case(PICKUP):
 	    {
 		snake->potential_death = false;
@@ -208,42 +240,56 @@ void Game::state_play()
 	    }
 	}
 
+	// Reset snake update timer.
 	timer_snake.reset();
     }
 
+    // Rendering
+    // clear screen
     rdr->clear(0, 0, 0);
 
+    // Render pickup
     rdr->render_pickup(pickup_pos_cell_x, pickup_pos_cell_y, tilesize);
+    // Render snake
     rdr->render_snake(snake, tilesize, width_n_tiles);
 
+    // Render score
     rdr->render_text(
 		     FONT_NORMAL, STYLE_3D_RG, std::to_string(score).c_str(),
 		     wnd->get_width()/2, 4*tilesize,
 		     2*((uint16_t)log10(score)+1)*tilesize, 2*tilesize,
 		     64, 64, 255);
 
+    // Render border around game board
     rdr->render_game_border();
 
+    // Swap backbuffer.
     rdr->swap_buf();
 }
 
+// Pause state
 void Game::state_pause()
 {
+    // unpause
     if(input->escape.released() || input->action.released())
     {
 	state = STATE_PLAY;
     }
 
+    // Return to main menu
     if(input->quit.released())
     {
 	state = STATE_SPLASH;
     }
 
+    // Rendering
     rdr->clear(0, 0, 0);
 
+    // Still render pickup and snake.
     rdr->render_pickup(pickup_pos_cell_x, pickup_pos_cell_y, tilesize);
     rdr->render_snake(snake, tilesize, width_n_tiles);
 
+    // Render text
     rdr->render_text(
 		     FONT_NORMAL, STYLE_3D_RG, std::to_string(score).c_str(),
 		     wnd->get_width()/2, 4*tilesize,
@@ -273,17 +319,21 @@ void Game::state_pause()
     rdr->swap_buf();
 }
 
+// Game over state
 void Game::state_game_over()
 {
+    // Restart new game
     if(input->replay.released())
     {
 	state = STATE_RESET_GAME;
     }
+    // Back to menu
     if(input->escape.released() || input->quit.released())
     {
 	state = STATE_SPLASH;
     }
 
+    // Rendering
     rdr->clear(0, 0, 0);
     rdr->render_text(
 		     FONT_NORMAL, STYLE_3D_RB, "HIGHSCORE:",
@@ -314,8 +364,10 @@ void Game::state_game_over()
     rdr->swap_buf();
 }
 
+// Randomize pickup position
 void Game::position_pickup()
 {
+    // as long as the pickup position is occupied, randomize again.
     tiles[pickup_index] = EMPTY;
     do
     {
