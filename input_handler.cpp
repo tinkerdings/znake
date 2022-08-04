@@ -36,16 +36,16 @@ bool Key::released()
 InputHandler::InputHandler()
 {
     up.add_keycode(SDLK_UP);
-    up.add_keycode(SDLK_w);
+    //    up.add_keycode(SDLK_w);
 
     down.add_keycode(SDLK_DOWN);
-    down.add_keycode(SDLK_s);
+    //    down.add_keycode(SDLK_s);
     
     left.add_keycode(SDLK_LEFT);
-    left.add_keycode(SDLK_a);
+    //    left.add_keycode(SDLK_a);
 
     right.add_keycode(SDLK_RIGHT);
-    right.add_keycode(SDLK_d);
+    //    right.add_keycode(SDLK_d);
 
     escape.add_keycode(SDLK_ESCAPE);
 

@@ -22,9 +22,9 @@ Game::Game(uint8_t tilesz, uint16_t w_n_tiles, uint16_t h_n_tiles) :
     srand(time(NULL));
 
     // Creates an SDL window.
-    wnd = new Window("Snake", tilesize*(width_n_tiles + 2), tilesize*(height_n_tiles + 8));
+    wnd = new Window("Znake", tilesize*(width_n_tiles + 2), tilesize*(height_n_tiles + 8));
     // game board edges
-    SDL_Rect game_border = {.x = tilesize, .y = tilesize * 7, .w = width_n_tiles * tilesize, .h = height_n_tiles * tilesize};
+    SDL_Rect game_border = {.x = tilesize, .y = tilesize * 7, .w = (int)(width_n_tiles * tilesize), .h = (int)(height_n_tiles * tilesize)};
     // contains rendering functions
     rdr = new Renderer(wnd, game_border, 200, 200);
     // handles input.
@@ -129,7 +129,7 @@ void Game::state_splash()
 		     64, 255, 32);
 
     rdr->render_text(
-		     FONT_NORMAL, STYLE_3D_RG, "[WASD] or [ARROW-KEYS] to move",
+		     FONT_NORMAL, STYLE_3D_RG, "[ARROW-KEYS] to move",
 		     wnd->get_width()/2, wnd->get_height() - 24*tilesize,
 		     24*tilesize, 2*tilesize,
 		     32, 255, 255);

@@ -2,7 +2,7 @@
 #include <SDL2/SDL.h>
 #include "game.hpp"
 
-int main()
+int main(int argc, char** argv)
 {
     // Creates window and sets up game variables & states.
     // parameters specify tilesize and number of tiles in the x and y direction.
