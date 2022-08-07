@@ -26,22 +26,22 @@ public:
     void position_pickup();
 
 private:
-    Tile *tiles;
-    Renderer *rdr;
+    Tile *tiles = nullptr;
+    Renderer *rdr = nullptr;
     SDL_Event evt;
-    Window *wnd;
-    InputHandler *input;
+    Window *wnd = nullptr;
+    InputHandler *input = nullptr;
     uint8_t tilesize;
     uint32_t width_n_tiles;
     uint32_t height_n_tiles;
     State state;
     bool quit;
     uint16_t score;
-    Snake *snake;
+    Snake *snake = nullptr;
     Timer timer_snake;
-    volatile uint32_t pickup_pos_cell_x;
-    volatile uint32_t pickup_pos_cell_y;
-    volatile uint32_t pickup_index;
+    uint32_t pickup_pos_cell_x;
+    uint32_t pickup_pos_cell_y;
+    uint32_t pickup_index;
 };
 
 #endif // GAME_H

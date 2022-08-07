@@ -1,8 +1,8 @@
 CC = g++
 INCLDIR = ./include
-CFLAGS = -O0 -g -Wall -I$(INCLDIR)
+CXXFLAGS = -O0 -g -Wall -Werror -I$(INCLDIR)
 LINK = -lm -lSDL2 -lSDL2_ttf
-CFLAGS += $(LINK)
+CXXFLAGS += $(LINK)
 OUTDIR = ./bin
 OUTNAME = znake
 OUT = $(OUTDIR)/$(OUTNAME)
@@ -14,7 +14,7 @@ main.o window.o game.o input_handler.o \
 renderer.o snake.o deltatime.o util.o
 
 $(OUT) : $(OBJS)
-	$(CC) -o $@ $(OBJS) $(CFLAGS)
+	$(CC) -o $@ $(OBJS) $(CXXFLAGS)
 
 main.o : ./include/game.hpp
 window.o : ./include/window.hpp

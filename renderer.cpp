@@ -3,7 +3,7 @@
 #include "renderer.hpp"
 #include "util.hpp"
 
-Renderer::Renderer(Window *wnd, SDL_Rect game_border, uint8_t font_size_title, uint8_t font_size_normal)
+Renderer::Renderer(Window *wnd, SDL_Rect game_border, int font_size_title, int font_size_normal)
 {
     // Create SDL renderer
     sdl_p = SDL_CreateRenderer(wnd->sdl_p, -1, SDL_RENDERER_ACCELERATED);
@@ -41,10 +41,10 @@ Renderer::Renderer(Window *wnd, SDL_Rect game_border, uint8_t font_size_title, u
 // Glitch effect consists of three separate borders with different colors, and random offsets in position.
 void Renderer::render_game_border()
 {
-    int32_t min = -1;
-    int32_t max = 1;
-    int32_t x_off = rand_range(min, max);
-    int32_t y_off = rand_range(min, max);
+    int min = -1;
+    int max = 1;
+    int x_off = rand_range(min, max);
+    int y_off = rand_range(min, max);
     SDL_Rect rect_a = {game_border.x + x_off, game_border.y + y_off, game_border.w, game_border.h};
 
     x_off = rand_range(min, max);
@@ -66,7 +66,7 @@ void Renderer::render_game_border()
 }
 
 // Renders pickup as a dollar sign with font rendering.
-void Renderer::render_pickup(uint32_t pos_cell_x, uint32_t pos_cell_y, uint8_t tilesize)
+void Renderer::render_pickup(int pos_cell_x, int pos_cell_y, int tilesize)
 {
         render_text(FONT_NORMAL, STYLE_3D_RB,
     		"$",
@@ -76,14 +76,14 @@ void Renderer::render_pickup(uint32_t pos_cell_x, uint32_t pos_cell_y, uint8_t t
 }
 
 // Renders snake as font characters, @ for the head and # for the body
-void Renderer::render_snake(Snake *snake, uint8_t tilesize, uint16_t width_n_tiles)
+void Renderer::render_snake(Snake *snake, int tilesize, int width_n_tiles)
 {
     render_text(FONT_NORMAL, STYLE_3D_RB,
 			  "@",
 			  tilesize/2 + game_border.x + snake->segments[0].pos_cell_x * tilesize,
 			  tilesize/2 + game_border.y + snake->segments[0].pos_cell_y * tilesize,
 			  tilesize, tilesize, 64, 255, 64);
-    for(auto i = 1; i < snake->segments.size(); i++)
+    for(int i = 1; i < (int)(snake->segments.size()); i++)
     {
 	render_text(FONT_NORMAL, STYLE_3D_RB,
 			    "#",
@@ -99,29 +99,29 @@ void Renderer::render_snake(Snake *snake, uint8_t tilesize, uint16_t width_n_til
 void Renderer::render_text(
 			   FontType font_type, FontStyle font_style,
 			   const char *str,
-			   uint32_t x, uint32_t y, uint32_t w, uint32_t h,
-			   uint8_t r, uint8_t g, uint8_t b)
+			   int x, int y, int w, int h,
+			   Uint8 r, Uint8 g, Uint8 b)
 {
     TTF_Font *font;
     SDL_Color color_text = {.r = r, .g = g, .b = b, .a = 255};
     SDL_Surface *srf_txt;
-    int32_t rand_off_x;
-    int32_t rand_off_y;
-    int32_t half_rand_off_x;
-    int32_t half_rand_off_y;
+    int rand_off_x;
+    int rand_off_y;
+    int half_rand_off_x;
+    int half_rand_off_y;
 
     switch(font_type)
     {
-	case(FONT_TITLE):
-	{
-	    font = font_title;
-	    break;
-	}
-	case(FONT_NORMAL):
-	{
-	    font = font_normal;
-	    break;
-	}
+		case(FONT_TITLE):
+		{
+			font = font_title;
+			break;
+		}
+		case(FONT_NORMAL):
+		{
+			font = font_normal;
+			break;
+		}
     }
 
     if(font_style != STYLE_NORMAL)
@@ -132,22 +132,26 @@ void Renderer::render_text(
 	{
 	    case(STYLE_3D_RG):
 	    {
-		color_3d_a.r = 255;
-		color_3d_b.g = 255;
-		break;
+			color_3d_a.r = 255;
+			color_3d_b.g = 255;
+			break;
 	    }
 	    case(STYLE_3D_RB):
 	    {
-		color_3d_a.r = 255;
-		color_3d_b.b = 255;
-		break;
+			color_3d_a.r = 255;
+			color_3d_b.b = 255;
+			break;
 	    }
 	    case(STYLE_3D_GB):
 	    {
-		color_3d_a.g = 255;
-		color_3d_b.b = 255;
-		break;
+			color_3d_a.g = 255;
+			color_3d_b.b = 255;
+			break;
 	    }
+		default:
+		{
+			break;
+		}
 	}
 
 	rand_off_x = rand_range(-1, 1);
@@ -186,10 +190,10 @@ void Renderer::render_text(
 
     SDL_Rect rect =
 	{
-	    .x = (int32_t)(x - w/2) + rand_off_x,
-	    .y = (int32_t)(y - h/2) + rand_off_y,
-	    .w = (int32_t)w,
-	    .h = (int32_t)h
+	    .x = (int)(x - w/2) + rand_off_x,
+	    .y = (int)(y - h/2) + rand_off_y,
+	    .w = (int)w,
+	    .h = (int)h
 	};
 
     // Copies texture to backbuffer.
@@ -214,7 +218,7 @@ void Renderer::swap_buf()
 }
 
 // Clear screen
-void Renderer::clear(uint8_t r, uint8_t g, uint8_t b)
+void Renderer::clear(Uint8 r, Uint8 g, Uint8 b)
 {
     SDL_SetRenderDrawColor(sdl_p, r, g, b, 255);
     SDL_RenderClear(sdl_p);

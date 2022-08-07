@@ -23,11 +23,11 @@ Window::~Window()
 }
 
 // Retrieve window width and height
-uint32_t Window::get_width()
+int Window::get_width()
 {
     return width;
 }
-uint32_t Window::get_height()
+int Window::get_height()
 {
     return height;
 }

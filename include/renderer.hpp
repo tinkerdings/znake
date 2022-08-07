@@ -20,19 +20,19 @@ enum FontStyle
 class Renderer
 {
 public:
-    Renderer(Window *wnd, SDL_Rect level_frame, uint8_t font_size_title, uint8_t font_size_normal);
+    Renderer(Window *wnd, SDL_Rect level_frame, int font_size_title, int font_size_normal);
     ~Renderer();
-    void clear(uint8_t r, uint8_t g, uint8_t b);
+    void clear(Uint8 r, Uint8 g, Uint8 b);
     void swap_buf();
     void render_game_border();
-    void render_snake(Snake *snake, uint8_t tilesize, uint16_t width_n_tiles);
-    void render_pickup(uint32_t pos_cell_x, uint32_t pos_cell_y, uint8_t tilesize);
-    void render_tiles_debug(Tile *tiles, uint8_t tilesize, uint32_t width_n_tiles, uint32_t height_n_tiles);
+    void render_snake(Snake *snake, int tilesize, int width_n_tiles);
+    void render_pickup(int pos_cell_x, int pos_cell_y, int tilesize);
+    void render_tiles_debug(Tile *tiles, int tilesize, int width_n_tiles, int height_n_tiles);
     void render_text(
 		     FontType font_type, FontStyle font_style,
 		     const char *str,
-		     uint32_t x, uint32_t y, uint32_t w, uint32_t h,
-		     uint8_t r, uint8_t g, uint8_t b);
+		     int x, int y, int w, int h,
+		     Uint8 r, Uint8 g, Uint8 b);
 private:
     SDL_Renderer *sdl_p;
     TTF_Font *font_title;

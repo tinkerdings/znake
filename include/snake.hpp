@@ -13,16 +13,16 @@ enum Direction
 
 struct SnakeSegment
 {
-    int32_t pos_cell_x;
-    int32_t pos_cell_y;
+    int pos_cell_x;
+    int pos_cell_y;
 };
 
 class Snake
 {
 public:
     Snake(Direction direction,
-	  Tile* tiles, uint16_t width_n_tiles, uint16_t height_n_tiles,
-	  uint16_t tile_x, uint16_t tile_y);
+	  Tile* tiles, int width_n_tiles, int height_n_tiles,
+	  int tile_x, int tile_y);
     ~Snake(){};
     Tile check_next_collision();
     void handle_input(InputHandler *input);
@@ -35,8 +35,8 @@ public:
     double delay;
 private:
     Tile *tiles;
-    uint16_t width_n_tiles;
-    uint16_t height_n_tiles;
+    int width_n_tiles;
+    int height_n_tiles;
 };
 
 #endif // SNAKE_HPP

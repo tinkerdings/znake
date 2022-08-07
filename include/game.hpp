@@ -15,7 +15,7 @@ enum State
 class Game
 {
 public:
-    Game(uint8_t tilesz, uint16_t w_n_tiles, uint16_t h_n_tiles);
+    Game(int tilesz, int w_n_tiles, int h_n_tiles);
     ~Game();
     void run();
     void state_splash();
@@ -26,22 +26,22 @@ public:
     void position_pickup();
 
 private:
-    Tile *tiles;
-    Renderer *rdr;
+    Tile *tiles = nullptr;
+    Renderer *rdr = nullptr;
     SDL_Event evt;
-    Window *wnd;
-    InputHandler *input;
-    uint8_t tilesize;
-    uint32_t width_n_tiles;
-    uint32_t height_n_tiles;
+    Window *wnd = nullptr;
+    InputHandler *input = nullptr;
+    int tilesize;
+    int width_n_tiles;
+    int height_n_tiles;
     State state;
     bool quit;
-    uint16_t score;
-    Snake *snake;
+    int score;
+    Snake *snake = nullptr;
     Timer timer_snake;
-    uint32_t pickup_pos_cell_x;
-    uint32_t pickup_pos_cell_y;
-    uint32_t pickup_index;
+    int pickup_pos_cell_x;
+    int pickup_pos_cell_y;
+    int pickup_index;
 };
 
 #endif // GAME_H

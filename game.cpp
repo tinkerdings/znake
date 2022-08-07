@@ -8,7 +8,7 @@
 #include "game.hpp"
 
 // Creates window, initializes tiles && sets game state to menu screen.
-Game::Game(uint8_t tilesz, uint16_t w_n_tiles, uint16_t h_n_tiles) :
+Game::Game(int tilesz, int w_n_tiles, int h_n_tiles) :
     tilesize{tilesz}, width_n_tiles{w_n_tiles}, height_n_tiles{h_n_tiles}
 {
     if(SDL_Init(SDL_INIT_EVERYTHING))
@@ -24,7 +24,11 @@ Game::Game(uint8_t tilesz, uint16_t w_n_tiles, uint16_t h_n_tiles) :
     // Creates an SDL window.
     wnd = new Window("Snake", tilesize*(width_n_tiles + 2), tilesize*(height_n_tiles + 8));
     // game board edges
-    SDL_Rect game_border = {.x = tilesize, .y = tilesize * 7, .w = width_n_tiles * tilesize, .h = height_n_tiles * tilesize};
+    SDL_Rect game_border = {};
+    game_border.x = tilesize;
+    game_border.y = tilesize * 7;
+    game_border.w = (int)(width_n_tiles * tilesize);
+    game_border.h = (int)(height_n_tiles * tilesize);
     // contains rendering functions
     rdr = new Renderer(wnd, game_border, 200, 200);
     // handles input.
@@ -33,7 +37,7 @@ Game::Game(uint8_t tilesz, uint16_t w_n_tiles, uint16_t h_n_tiles) :
     // Sets tile index of pickup object.
     pickup_index = 0;
     // allocates space for game tiles and sets them to EMPTY.
-    tiles = (Tile*)calloc(width_n_tiles*height_n_tiles, sizeof(uint32_t));
+    tiles = (Tile*)calloc(width_n_tiles*height_n_tiles, sizeof(int));
     if(tiles == NULL)
     {
 	std::cout << "Failed to allocate tiles array" << std::endl;
@@ -54,7 +58,7 @@ Game::Game(uint8_t tilesz, uint16_t w_n_tiles, uint16_t h_n_tiles) :
 Game::~Game()
 {
     free(tiles);
-    delete snake;
+	delete snake;
     delete input;
     delete rdr;
     delete wnd;
@@ -66,6 +70,8 @@ void Game::run()
     while(!quit)
     {
 	input->update_keys(&evt);
+	if(evt.type == SDL_QUIT)
+	    quit = true;
 
 	switch(state)
 	{
@@ -103,13 +109,13 @@ void Game::run()
 void Game::state_splash()
 {
     // Quit program.
-    if(input->quit.released() || input->escape.released())
+    if(input->quit->released() || input->escape->released())
     {
-	quit = true;
+		quit = true;
     }
-    if(input->action.released())
+    if(input->action->released())
     {
-	state = STATE_RESET_GAME;
+		state = STATE_RESET_GAME;
     }
 
     // Clear screen
@@ -129,7 +135,7 @@ void Game::state_splash()
 		     64, 255, 32);
 
     rdr->render_text(
-		     FONT_NORMAL, STYLE_3D_RG, "[WASD] or [ARROW-KEYS] to move",
+		     FONT_NORMAL, STYLE_3D_RG, "[ARROW-KEYS] to move",
 		     wnd->get_width()/2, wnd->get_height() - 24*tilesize,
 		     24*tilesize, 2*tilesize,
 		     32, 255, 255);
@@ -161,9 +167,9 @@ void Game::state_reset_game()
     score = 0;
 
     // Recreate snake object to reset values.
-    if(snake != NULL)
+    if(snake != nullptr)
     {
-	delete snake;
+		delete snake;
     }
 
     snake = new Snake(UP, tiles, width_n_tiles, height_n_tiles, width_n_tiles/2, height_n_tiles/2);
@@ -184,9 +190,9 @@ void Game::state_reset_game()
 // Play state, this is the state when playing the game.
 void Game::state_play()
 {
-    if(input->escape.released())
+    if(input->escape->released())
     {
-	state = STATE_PAUSE;
+		state = STATE_PAUSE;
     }
 
     // Handle snake objects relevant input.
@@ -194,55 +200,55 @@ void Game::state_play()
 
     // update snake if timer has reached certain delay.
     if(timer_snake.diff() > snake->delay)
-    {
-	uint32_t snake_head_index = snake->segments[0].pos_cell_y*width_n_tiles+snake->segments[0].pos_cell_x;
-	uint32_t snake_tail_index = snake->segments[snake->segments.size()-1].pos_cell_y*width_n_tiles+snake->segments[snake->segments.size()-1].pos_cell_x;
-
-	// Handle collision with different tiles.
-	Tile snake_collision = snake->check_next_collision();
-
-	switch(snake_collision)
 	{
-	    // No collision move ahead.
-	    case(EMPTY):
-	    {
-		snake->potential_death = false;
-		snake->update();
-		tiles[snake_head_index] = SNAKE;
-		tiles[snake_tail_index] = EMPTY;
-		break;
-	    }
-	    // might die on next step, since tile ahead is snake or out of bounds.
-	    case(OUT_OF_BOUNDS):
-	    case(SNAKE):
-	    {
-		if(snake->potential_death)
+		int snake_head_index = snake->segments[0].pos_cell_y*width_n_tiles+snake->segments[0].pos_cell_x;
+		int snake_tail_index = snake->segments[snake->segments.size()-1].pos_cell_y*width_n_tiles+snake->segments[snake->segments.size()-1].pos_cell_x;
+
+		// Handle collision with different tiles.
+		Tile snake_collision = snake->check_next_collision();
+
+		switch(snake_collision)
 		{
-		    state = STATE_GAME_OVER;
-		    break;
+			// No collision move ahead.
+			case(EMPTY):
+			{
+			snake->potential_death = false;
+			snake->update();
+			tiles[snake_head_index] = SNAKE;
+			tiles[snake_tail_index] = EMPTY;
+			break;
+			}
+			// might die on next step, since tile ahead is snake or out of bounds.
+			case(OUT_OF_BOUNDS):
+			case(SNAKE):
+			{
+			if(snake->potential_death)
+			{
+				state = STATE_GAME_OVER;
+				break;
+			}
+			snake->potential_death = true;
+
+			break;
+			}
+			// increase score and add a segment to the snake, hit pickup.
+			case(PICKUP):
+			{
+				snake->potential_death = false;
+				score++;
+
+
+				tiles[snake_head_index] = SNAKE;
+				snake->add_segment();
+				snake->update();
+				position_pickup();
+			break;
+			}
 		}
-		snake->potential_death = true;
 
-		break;
-	    }
-	    // increase score and add a segment to the snake, hit pickup.
-	    case(PICKUP):
-	    {
-		snake->potential_death = false;
-		score++;
-
-		position_pickup();
-
-		tiles[snake_head_index] = SNAKE;
-		snake->add_segment();
-		snake->update();
-		break;
-	    }
+		// Reset snake update timer.
+		timer_snake.reset();
 	}
-
-	// Reset snake update timer.
-	timer_snake.reset();
-    }
 
     // Rendering
     // clear screen
@@ -257,7 +263,7 @@ void Game::state_play()
     rdr->render_text(
 		     FONT_NORMAL, STYLE_3D_RG, std::to_string(score).c_str(),
 		     wnd->get_width()/2, 4*tilesize,
-		     2*((uint16_t)log10(score)+1)*tilesize, 2*tilesize,
+		     2*((int)log10(score)+1)*tilesize, 2*tilesize,
 		     64, 64, 255);
 
     // Render border around game board
@@ -271,15 +277,15 @@ void Game::state_play()
 void Game::state_pause()
 {
     // unpause
-    if(input->escape.released() || input->action.released())
+    if(input->escape->released() || input->action->released())
     {
-	state = STATE_PLAY;
+		state = STATE_PLAY;
     }
 
     // Return to main menu
-    if(input->quit.released())
+    if(input->quit->released())
     {
-	state = STATE_SPLASH;
+		state = STATE_SPLASH;
     }
 
     // Rendering
@@ -293,7 +299,7 @@ void Game::state_pause()
     rdr->render_text(
 		     FONT_NORMAL, STYLE_3D_RG, std::to_string(score).c_str(),
 		     wnd->get_width()/2, 4*tilesize,
-		     2*((uint16_t)log10(score)+1)*tilesize, 2*tilesize,
+		     2*((int)log10(score)+1)*tilesize, 2*tilesize,
 		     64, 32, 255);
 
     rdr->render_text(
@@ -323,14 +329,14 @@ void Game::state_pause()
 void Game::state_game_over()
 {
     // Restart new game
-    if(input->replay.released())
+    if(input->replay->released())
     {
-	state = STATE_RESET_GAME;
+		state = STATE_RESET_GAME;
     }
     // Back to menu
-    if(input->escape.released() || input->quit.released())
+    if(input->escape->released() || input->quit->released())
     {
-	state = STATE_SPLASH;
+		state = STATE_SPLASH;
     }
 
     // Rendering
@@ -343,7 +349,7 @@ void Game::state_game_over()
     rdr->render_text(
 		     FONT_NORMAL, STYLE_3D_RG, std::to_string(score).c_str(),
 		     wnd->get_width()/2, 12*tilesize,
-		     8*((uint16_t)log10(score)+1)*tilesize, 8*tilesize,
+		     8*((int)log10(score)+1)*tilesize, 8*tilesize,
 		     64, 32, 255);
     rdr->render_text(
 		     FONT_TITLE, STYLE_3D_GB, "GaMe OvEr",
@@ -371,9 +377,9 @@ void Game::position_pickup()
     tiles[pickup_index] = EMPTY;
     do
     {
-	pickup_pos_cell_x = (uint32_t)rand_range(0, width_n_tiles);
-	pickup_pos_cell_y = (uint32_t)rand_range(0, height_n_tiles);
-	pickup_index = (pickup_pos_cell_y*width_n_tiles) + pickup_pos_cell_x;
+		pickup_pos_cell_x = rand_range(0, width_n_tiles);
+		pickup_pos_cell_y = rand_range(0, height_n_tiles);
+		pickup_index = (pickup_pos_cell_y*width_n_tiles) + pickup_pos_cell_x;
     }
     while(tiles[pickup_index] != EMPTY);
 

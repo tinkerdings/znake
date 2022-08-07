@@ -11,12 +11,12 @@ public:
     Window(const char *title, int width, int height);
     ~Window();
     SDL_Window *sdl_p = nullptr;
-    uint32_t get_width();
-    uint32_t get_height();
+    int get_width();
+    int get_height();
 
 private:
-    uint32_t width;
-    uint32_t height;
+    int width;
+    int height;
 };
 
 #endif // WINDOW_H

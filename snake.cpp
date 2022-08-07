@@ -2,8 +2,8 @@
 
 // Creates snake
 Snake::Snake(Direction direction,
-	     Tile *tiles, uint16_t width_n_tiles, uint16_t height_n_tiles,
-	     uint16_t tile_x, uint16_t tile_y)
+	     Tile *tiles, int width_n_tiles, int height_n_tiles,
+	     int tile_x, int tile_y)
 {
     this->tiles = tiles;
     this->width_n_tiles = width_n_tiles;
@@ -64,33 +64,33 @@ Snake::Snake(Direction direction,
 void Snake::handle_input(InputHandler *input)
 {
     // Change directions.
-    if(input->up.hold())
+    if(input->up->hold())
     {
-	if(direction != DOWN)
-	{
-	    new_direction = UP;
-	}
+		if(direction != DOWN)
+		{
+			new_direction = UP;
+		}
     }
-    if(input->down.hold())
+    if(input->down->hold())
     {
-	if(direction != UP)
-	{
-	    new_direction = DOWN;
-	}
+		if(direction != UP)
+		{
+			new_direction = DOWN;
+		}
     }
-    if(input->left.hold())
+    if(input->left->hold())
     {
-	if(direction != RIGHT)
-	{
-	    new_direction = LEFT;
-	}
+		if(direction != RIGHT)
+		{
+			new_direction = LEFT;
+		}
     }
-    if(input->right.hold())
+    if(input->right->hold())
     {
-	if(direction != LEFT)
-	{
-	    new_direction = RIGHT;
-	}
+		if(direction != LEFT)
+		{
+			new_direction = RIGHT;
+		}
     }
 }
 
@@ -109,8 +109,8 @@ void Snake::add_segment()
 // Check next update collisions.
 Tile Snake::check_next_collision()
 {
-    int32_t plus_x;
-    int32_t plus_y;
+    int plus_x;
+    int plus_y;
 
     // sets x and y dir offsets depending on direction.
     switch(new_direction)
@@ -142,9 +142,9 @@ Tile Snake::check_next_collision()
     }
 
     // Calculates next tile index, aka where the snake will move in the gameboard tiles.
-    int32_t tiles_index_x = segments[0].pos_cell_x + plus_x;
-    int32_t tiles_index_y = segments[0].pos_cell_y + plus_y;
-    int32_t tiles_index =
+    int tiles_index_x = segments[0].pos_cell_x + plus_x;
+    int tiles_index_y = segments[0].pos_cell_y + plus_y;
+    int tiles_index =
 	(tiles_index_y * width_n_tiles) + tiles_index_x;
 
     // Outside game board.
@@ -160,38 +160,37 @@ Tile Snake::check_next_collision()
 // Moves snake segments. 
 void Snake::update()
 {
-    auto itr = segments.end();
-
     // moves segment to the position of the one before it.
-    for(; itr != segments.begin(); itr--)
-    {
-	itr->pos_cell_x = (itr-1)->pos_cell_x;
-	itr->pos_cell_y = (itr-1)->pos_cell_y;
-    }
+	for(int i = segments.size()-1; i > 0; i--)
+	{
+		segments[i].pos_cell_x = segments[i-1].pos_cell_x;
+		segments[i].pos_cell_y = segments[i-1].pos_cell_y;
+	}
 
     // Moves head segment.
     switch(new_direction)
     {
-	case(UP):
-	{
-	    segments[0].pos_cell_y--;
-	    break;
-	}
-	case(DOWN):
-	{
-	    segments[0].pos_cell_y++;
-	    break;
-	}
-	case(LEFT):
-	{
-	    segments[0].pos_cell_x--;
-	    break;
-	}
-	case(RIGHT):
-	{
-	    segments[0].pos_cell_x++;
-	    break;
-	}
+		case(UP):
+		{
+			segments[0].pos_cell_y--;
+			break;
+		}
+		case(DOWN):
+		{
+			segments[0].pos_cell_y++;
+			break;
+		}
+		case(LEFT):
+		{
+			segments[0].pos_cell_x--;
+			break;
+		}
+		case(RIGHT):
+		{
+			segments[0].pos_cell_x++;
+			break;
+		}
     }
+
     direction = new_direction;
 }

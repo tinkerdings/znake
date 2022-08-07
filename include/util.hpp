@@ -3,6 +3,6 @@
 
 #include <cstdint>
 
-int32_t rand_range(int32_t low, int32_t high);
+int rand_range(int low, int high);
 
 #endif // UTIL_HPP
