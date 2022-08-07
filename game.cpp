@@ -22,7 +22,7 @@ Game::Game(int tilesz, int w_n_tiles, int h_n_tiles) :
     srand(time(NULL));
 
     // Creates an SDL window.
-    wnd = new Window("Snake", tilesize*(width_n_tiles + 2), tilesize*(height_n_tiles + 8));
+    wnd = new Window("Znake", tilesize*(width_n_tiles + 2), tilesize*(height_n_tiles + 8));
     // game board edges
     SDL_Rect game_border = {};
     game_border.x = tilesize;
